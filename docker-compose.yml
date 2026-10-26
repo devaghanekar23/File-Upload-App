@@ -1,0 +1,21 @@
+services:
+  mysql:
+    image: mysql:8
+    environment: {MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}", MYSQL_DATABASE: fileapp}
+    volumes: [dbdata:/var/lib/mysql]
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: mysql
+      DB_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      JWT_SECRET: "${JWT_SECRET}"
+      S3_BUCKET: "${S3_BUCKET}"
+      AWS_REGION: "${AWS_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+    depends_on: [mysql]
+  frontend:
+    build: ./frontend
+    ports: ["80:80"]
+    depends_on: [backend]
+volumes: {dbdata: {}}
